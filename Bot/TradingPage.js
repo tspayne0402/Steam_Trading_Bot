@@ -46,25 +46,25 @@ function scheduleReconnect() {
 client.on('loggedOn', () => {
   console.log('Successfully logged into Steam');
   reconnectDelay = 5; // Reset reconnect delay on successful login
-  
+
   client.setPersona(SteamUser.EPersonaState.Online);
   client.gamesPlayed(440);
 });
 
 client.on('webSession', (sessionid, cookies) => {
   console.log('Got web session');
-  
+
   manager.setCookies(cookies);
   community.setCookies(cookies);
-  
+
   // Start confirmation checker for mobile confirmations
   community.startConfirmationChecker(10000, config.identitySecret);
 });
 
 client.on('error', (error) => {
   console.error('Steam client error:', error);
-  
-  if (error.eresult === SteamUser.EResult.InvalidPassword || 
+
+  if (error.eresult === SteamUser.EResult.InvalidPassword ||
       error.eresult === SteamUser.EResult.AccountLoginDeniedThrottle) {
     console.error('Critical login error - stopping bot');
     process.exit(1);
@@ -81,11 +81,11 @@ client.on('disconnected', (eresult, msg) => {
 // Trade offer manager event handlers
 manager.on('newOffer', (offer) => {
   console.log(`New offer #${offer.id} from ${offer.partner.getSteamID64()}`);
-  
+
   // Security check - only accept trades from trusted partners
   if (config.trustedPartners && config.trustedPartners.includes(offer.partner.getSteamID64())) {
     console.log(`Accepting offer from trusted partner: ${offer.partner.getSteamID64()}`);
-    
+
     // Added delay to avoid rate limiting
     setTimeout(() => {
       offer.accept((err, status) => {
@@ -98,7 +98,7 @@ manager.on('newOffer', (offer) => {
     }, 2000);
   } else {
     console.log(`Declining offer from untrusted partner: ${offer.partner.getSteamID64()}`);
-    
+
     offer.decline((err) => {
       if (err) {
         console.error(`Error declining offer: ${err}`);
