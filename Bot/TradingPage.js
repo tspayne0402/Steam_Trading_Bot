@@ -35,7 +35,7 @@ client.on('webSession', (sessionid, cookies) => {
 });
 
 manager.on('newOffer', offer => {
-  if (offer.partner.getSteamID64() === 'your_trusted_account_id') {
+  if (offer.partner.getSteamID64() === '76561198205590591') {
     offer.accept((err, status) => {
       if (err) {
         console.log(err);
