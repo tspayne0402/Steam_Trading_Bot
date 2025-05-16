@@ -11,8 +11,6 @@ const manager = new TradeOfferManager({
   steam: client,
   community: community,
   language: 'en',
-  pollInterval: 10000, // Poll every 10 seconds
-  cancelTime: 300000 // Cancel outgoing trade offers after 5 minutes
 });
 
 // Connection retry handling
@@ -48,7 +46,7 @@ client.on('loggedOn', () => {
   reconnectDelay = 5; // Reset reconnect delay on successful login
 
   client.setPersona(SteamUser.EPersonaState.Online);
-  client.gamesPlayed(440);
+  client.gamesPlayed(730);
 });
 
 client.on('webSession', (sessionid, cookies) => {
@@ -107,21 +105,6 @@ manager.on('newOffer', (offer) => {
       }
     });
   }
-});
-
-manager.on('receivedOfferChanged', (offer, oldState) => {
-  console.log(`Offer #${offer.id} changed: ${TradeOfferManager.ETradeOfferState[oldState]} -> ${TradeOfferManager.ETradeOfferState[offer.state]}`);
-});
-
-manager.on('pollFailure', (err) => {
-  console.error('Error polling trades:', err);
-});
-
-// Handle process termination
-process.on('SIGINT', () => {
-  console.log('Logging off and shutting down...');
-  client.logOff();
-  setTimeout(() => process.exit(0), 1000);
 });
 
 // Start the bot
