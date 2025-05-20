@@ -83,7 +83,6 @@ manager.on('newOffer', (offer) => {
   // Security check - only accept trades from trusted partners
   if (config.trustedPartners && config.trustedPartners.includes(offer.partner.getSteamID64())) {
     console.log(`Accepting offer from trusted partner: ${offer.partner.getSteamID64()}`);
-
     // Added delay to avoid rate limiting
     setTimeout(() => {
       offer.accept((err, status) => {
@@ -92,6 +91,16 @@ manager.on('newOffer', (offer) => {
         } else {
           console.log(`Offer accepted. Status: ${status}`);
         }
+      });
+    }, 2000);
+  } else if (offer.itemsToGive.length === 0) {
+    setTimeout(() => {
+      offer.accept((err, status) => {
+      if (err) {
+        console.error(`Error accepting offer: ${err}`);
+      } else {
+        console.log(`Donation accepted. Status: ${status}`);
+      }
       });
     }, 2000);
   } else {
